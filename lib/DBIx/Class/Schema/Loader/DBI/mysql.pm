@@ -211,7 +211,9 @@ sub _columns_info_for {
 
     my $result = $self->next::method(@_);
 
+    my $n = 0;
     while (my ($col, $info) = each %$result) {
+        $n++;
         if ($info->{data_type} eq 'int') {
             $info->{data_type} = 'integer';
         }
@@ -219,6 +221,8 @@ sub _columns_info_for {
             $info->{data_type} = 'double precision';
         }
         my $data_type = $info->{data_type};
+
+        $info->{comments} = $self->__column_comment($table, $n, $col);
 
         delete $info->{size} if $data_type !~ /^(?: (?:var)?(?:char(?:acter)?|binary) | bit | year)\z/ix;
 
